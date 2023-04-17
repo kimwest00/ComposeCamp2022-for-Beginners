@@ -11,6 +11,7 @@ import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
@@ -23,7 +24,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            DefaultPreview()
+            DefaultPreiview()
         }
     }
 }
@@ -31,17 +32,15 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun Caculate(modifier: Modifier) {
     Column(
-        modifier = modifier,
+        modifier = modifier.padding(32.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Top
+        verticalArrangement = Arrangement.spacedBy(25.dp)
     ) {
-        Text(text = "Calculate Tip", style = TextStyle(
+        Text(text = stringResource(R.string.title), style = TextStyle(
             fontSize = 20.sp
         ))
-        Spacer(modifier = Modifier.height(25.dp))
-        TextField(value = TextFieldValue("Cost of Service"), onValueChange = {})
-        Spacer(modifier = Modifier.height(25.dp))
-        Text(text = "Tip Amount: $", style = TextStyle(
+        TextField(value = TextFieldValue(stringResource(R.string.hint_text)), onValueChange = {})
+        Text(text = stringResource(R.string.result), style = TextStyle(
             fontSize = 18.sp, fontWeight = FontWeight.Bold
         ))
     }
@@ -49,11 +48,9 @@ fun Caculate(modifier: Modifier) {
 
 @Preview(showBackground = true)
 @Composable
-fun DefaultPreview() {
+fun DefaultPreiview() {
     TipTimeTheme {
         Caculate(
-            Modifier
-                .fillMaxSize()
-                .absolutePadding(top = 20.dp))
+            Modifier.fillMaxSize())
     }
 }
