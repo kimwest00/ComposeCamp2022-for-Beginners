@@ -7,11 +7,9 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.*
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
-import androidx.compose.material.Text
-import androidx.compose.material.TextField
-import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -27,6 +25,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.tiptime.ui.theme.DarkGrey
 import com.example.tiptime.ui.theme.MainBackGround
 import com.example.tiptime.ui.theme.TipTimeTheme
 import java.text.NumberFormat
@@ -46,10 +45,15 @@ fun Caculate(modifier: Modifier) {
 
     var billAmount by remember { mutableStateOf("") }
     var tipAmount by remember { mutableStateOf("") }
+    var isRound by remember {
+        mutableStateOf(false)
+    }
 
     val billDoubleType = billAmount.toDoubleOrNull() ?:0.00
     val tipDoubleType = tipAmount.toDoubleOrNull() ?:0.00
-    val tip = calculateTip(billDoubleType,tipDoubleType)
+    val tip = calculateTip(billDoubleType,tipDoubleType,isRound)
+
+
     Column(
         modifier = modifier.padding(32.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -88,6 +92,9 @@ fun Caculate(modifier: Modifier) {
                 }
             ),
         )
+        RoundTipRow(isRound = isRound, onRoundedCheck = {
+            isRound = it
+        })
         Text(text = stringResource(R.string.result,tip), style = TextStyle(
             fontSize = 18.sp, fontWeight = FontWeight.Bold
         ))
@@ -115,11 +122,38 @@ fun EditNumberField(
         label = { Text(stringResource(label)) },
         onValueChange = onValueChange,)
 }
+
+@Composable
+fun RoundTipRow(
+    modifier: Modifier=Modifier,
+    isRound:Boolean = false,
+    onRoundedCheck : (Boolean) -> Unit,
+){
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .size(48.dp),
+    ){
+        Text(text = stringResource(id = R.string.round_up_tip))
+        Switch(modifier = modifier
+            .fillMaxWidth()
+            .wrapContentWidth(Alignment.End)
+            ,checked = isRound, onCheckedChange = onRoundedCheck
+            , colors = SwitchDefaults.colors(
+                uncheckedThumbColor = DarkGrey
+            )
+        )
+    }
+}
 private fun calculateTip(
     amount:Double,
-    tipPercent:Double = 15.0
+    tipPercent:Double = 15.0,
+    isRound: Boolean
 ):String{
-    val tip = tipPercent / 100 * amount
+    var tip = tipPercent / 100 * amount
+    if(isRound){
+        tip = kotlin.math.ceil(tip)
+    }
     //통화 형식으로 지정
     return NumberFormat.getCurrencyInstance().format(tip)
 }
