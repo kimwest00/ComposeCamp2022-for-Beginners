@@ -35,6 +35,9 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun Caculate(modifier: Modifier) {
+    var number by remember { mutableStateOf("") }
+    val numberDoubleType = number.toDoubleOrNull() ?:0.0
+    val tip = calculateTip(numberDoubleType)
     Column(
         modifier = modifier.padding(32.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -43,29 +46,28 @@ fun Caculate(modifier: Modifier) {
         Text(text = stringResource(R.string.title), style = TextStyle(
             fontSize = 20.sp
         ))
-        EditNumberField()
-        Text(text = stringResource(R.string.result,""), style = TextStyle(
+        EditNumberField(
+            value = number,
+            onValueChange = {number = it}
+        )
+        Text(text = stringResource(R.string.result,tip), style = TextStyle(
             fontSize = 18.sp, fontWeight = FontWeight.Bold
         ))
     }
 }
-ㅔ
 @Composable
-fun EditNumberField(){
-    var number by remember { mutableStateOf("") }
-    val numberDoubleType = number.toDoubleOrNull() ?:0.0
-    val tip = calculateTip(numberDoubleType)
+fun EditNumberField(
+    value: String,
+    onValueChange:(String)->Unit,
+){
     TextField(
         // Other parameters
         modifier = Modifier.fillMaxWidth(),
         singleLine = true,
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-        value = number,
-        //TODO: text @Composable invocatins can only happen from context of a @Composable function 에러 수정
-        label = { Text(text = stringResource(R.string.hint_text)) },
-        onValueChange = {
-            number = it
-        },
+        value = value,
+        label = { Text(stringResource(R.string.hint_text)) },
+        onValueChange = onValueChange,)
 }
 private fun calculateTip(
     amount:Double,
