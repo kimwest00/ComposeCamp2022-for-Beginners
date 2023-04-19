@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
@@ -16,9 +17,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -38,6 +42,8 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun Caculate(modifier: Modifier) {
+    val focusManager = LocalFocusManager.current
+
     var billAmount by remember { mutableStateOf("") }
     var tipAmount by remember { mutableStateOf("") }
 
@@ -55,12 +61,32 @@ fun Caculate(modifier: Modifier) {
         EditNumberField(
             value = billAmount,
             onValueChange = {billAmount = it},
-            label = R.string.bill_amount_hint_text
+            label = R.string.bill_amount_hint_text,
+            keyboardOptions = KeyboardOptions.Default.copy(
+                keyboardType = KeyboardType.Number,
+                imeAction = ImeAction.Next
+            ),
+            keyboardActions = KeyboardActions (
+                onNext = {
+                    focusManager.moveFocus(FocusDirection.Down)
+                }
+            ),
+
+
         )
         EditNumberField(
             value = tipAmount,
             onValueChange = {tipAmount = it},
-            label = R.string.tip_text
+            label = R.string.tip_text,
+            keyboardOptions = KeyboardOptions.Default.copy(
+                keyboardType = KeyboardType.Number,
+                imeAction = ImeAction.Done
+            ),
+            keyboardActions = KeyboardActions (
+                onDone = {
+                    focusManager.clearFocus()
+                }
+            ),
         )
         Text(text = stringResource(R.string.result,tip), style = TextStyle(
             fontSize = 18.sp, fontWeight = FontWeight.Bold
@@ -72,16 +98,19 @@ fun EditNumberField(
     value: String,
     onValueChange:(String)->Unit,
     @StringRes label: Int,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier.fillMaxWidth(),
+    keyboardOptions: KeyboardOptions,
+    keyboardActions: KeyboardActions
 ){
     TextField(
         // Other parameters
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier,
         colors =  TextFieldDefaults.textFieldColors(
             backgroundColor = MainBackGround
         ),
         singleLine = true,
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+        keyboardOptions = keyboardOptions,
+        keyboardActions = keyboardActions,
         value = value,
         label = { Text(stringResource(label)) },
         onValueChange = onValueChange,)
