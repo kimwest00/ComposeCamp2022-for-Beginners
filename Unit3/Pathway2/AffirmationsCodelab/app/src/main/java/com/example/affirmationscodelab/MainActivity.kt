@@ -15,12 +15,13 @@
  */
 package com.example.affirmationscodelab
 import android.os.Bundle
-import android.widget.Space
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -37,7 +38,7 @@ import com.example.affirmationscodelab.data.GridDataSource
 import com.example.affirmationscodelab.model.Affirmation
 import com.example.affirmationscodelab.model.Topic
 import com.example.affirmationscodelab.ui.theme.AffirmationsTheme
-
+import androidx.compose.foundation.lazy.grid.items
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,13 +51,27 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun GridApp(){
     AffirmationsTheme {
-        GridCard(GridDataSource.topics[0])
+        GridView(GridDataSource.topics)
     }
 }
-
+@Composable
+fun GridView(itemList:List<Topic>,modifier: Modifier=Modifier){
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(2),
+        modifier = modifier,
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ){
+        items(itemList){item->
+            GridCard(item)
+        }
+    }
+}
 @Composable
 fun GridCard(topic: Topic){
-    Card() {
+    Card(
+        elevation = 10.dp
+    ){
         Row {
            Image(
                painter = painterResource(id = topic.imageResourceId),
