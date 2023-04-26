@@ -20,7 +20,6 @@ class GameViewModel:ViewModel() {
         val currentWordCount: Int = 1,
         val score: Int = 0,
         val isGameOver:Boolean = false
-
     )
     private val _uiState = MutableStateFlow(GameUiState())
     val uiState: StateFlow<GameUiState> = _uiState.asStateFlow()
