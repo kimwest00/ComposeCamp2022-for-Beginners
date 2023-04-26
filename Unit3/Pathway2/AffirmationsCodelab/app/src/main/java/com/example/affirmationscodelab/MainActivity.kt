@@ -18,11 +18,10 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -35,20 +34,76 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.lazy.items
 import com.example.affirmationscodelab.data.Datasource
+import com.example.affirmationscodelab.data.GridDataSource
 import com.example.affirmationscodelab.model.Affirmation
+import com.example.affirmationscodelab.model.Topic
 import com.example.affirmationscodelab.ui.theme.AffirmationsTheme
-
+import androidx.compose.foundation.lazy.grid.items
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            AffirmationApp()
+            GridApp()
+        }
+    }
+}
+@Preview
+@Composable
+fun GridApp(){
+    AffirmationsTheme {
+        GridView(GridDataSource.topics)
+    }
+}
+@Composable
+fun GridView(itemList:List<Topic>,modifier: Modifier=Modifier){
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(2),
+        modifier = modifier,
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ){
+        items(itemList){item->
+            GridCard(item)
+        }
+    }
+}
+@Composable
+fun GridCard(topic: Topic){
+    Card(
+        elevation = 10.dp
+    ){
+        Row {
+           Image(
+               painter = painterResource(id = topic.imageResourceId),
+               contentDescription = stringResource(id= topic.stringResourceId),
+               modifier = Modifier
+                   .width(68.dp)
+                   .height(68.dp),
+               contentScale = ContentScale.Fit
+           )
+            Column(
+                modifier = Modifier.padding(16.dp)
+            ) {
+                Text(
+                    text = stringResource(id = topic.stringResourceId),
+                    style = MaterialTheme.typography.body2
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Row {
+                   Text("✨")
+                    Spacer(modifier = Modifier.width(8.dp))
+                   Text(
+                       topic.view.toString(),
+                       style = MaterialTheme.typography.caption
+                   )
+                }
+
+            }
         }
     }
 }
 
 
-@Preview
 @Composable
 fun AffirmationApp() {
     AffirmationsTheme {
